@@ -1,0 +1,39 @@
+#create a network and add our services into this network:
+#so, "app" service will be able to connect to the mysql database from "db" servoce by the hostname="db":
+#jdbc:mysql://db:3306/DOCKERDB
+
+#Connection url for connection in the DatabaseView:
+#  jdbc:mysql://0.0.0.0:13306/DOCKERDB, login=root, password=root
+#App is available at: http://localhost:18080/entitybus/post
+version: '3.1'
+
+networks:
+  test:
+    driver: bridge
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "18080:8080"
+    depends_on:
+      - mysql
+    networks:
+      - test
+
+  mysql:
+    container_name: mysql
+    restart: unless-stopped
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: 'test_pass' # TODO: Change this
+      MYSQL_USER: 'test'
+      MYSQL_PASS: 'pass'
+    volumes:
+      - type: volume
+        source: mysql_data
+        target: /var/lib/mysql
+volumes:
+  mysql_data:
