@@ -51,6 +51,33 @@ public class UserController {
         public String url;
     }
 
+    static class NearByUserRequest {
+        public String UUID;
+        public Double lat;
+        @JsonProperty("long")
+        public Double Long;
+        public Double lat_limit;
+        public Double long_limit;
+    }
+
+    static class NearByUserResponse implements  Comparable<NearByUserResponse> {
+        public NearByUserResponse(String _uuid, Double _lat, Double _long) {
+            UUID = _uuid;
+            lat = _lat;
+            Long = _long;
+        }
+
+        public String UUID;
+        public Double lat;
+        @JsonProperty("long")
+        public Double Long;
+
+        @Override
+        public int compareTo(NearByUserResponse nearByUserResponse) {
+            return UUID.compareTo(nearByUserResponse.UUID);
+        }
+    }
+
     static class CommonError {
         public CommonError(String _error) {
             error = _error;
@@ -137,6 +164,24 @@ public class UserController {
             }
 
             return ResponseEntity.ok("");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(mapper.writeValueAsString(new CommonError(e.getMessage())));
+        }
+    }
+
+    @GetMapping("/nearbyUser")
+    @Transactional
+    public ResponseEntity<String> getNearByUser(@RequestBody String jsonBody) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            NearByUserRequest req = mapper.readValue(jsonBody, NearByUserRequest.class);
+            var q = QFridgeUser.fridgeUser;
+            var result = jpaQueryFactory.from(q).select(q).fetch();
+
+            var filtered = result.stream().filter(x -> (Math.abs(x.latitude - req.lat) < req.lat_limit) && (Math.abs(x.longitude - req.Long) < req.long_limit)).map(x -> new NearByUserResponse(x.userUUID, x.latitude, x.longitude)).sorted().toList();
+
+            return ResponseEntity.ok(mapper.writeValueAsString(filtered));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body(mapper.writeValueAsString(new CommonError(e.getMessage())));
