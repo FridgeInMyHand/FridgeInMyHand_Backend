@@ -37,6 +37,22 @@ public class Food{
         public Boolean getPublic() {
             return isPublic;
         }
+
+        public void setUserUUID(String UserUUID){
+            this.userUUID = userUUID;
+        }
+        public void setFoodName(String foodName){
+            this.foodName = foodName;
+        }
+        public void setIsPublic(Boolean isPublic){
+            this.isPublic = isPublic;
+        }
+        public void setQuantity(String quantity){
+            this.quantity = quantity;
+        }
+        public void setBestBefore(LocalDate bestBefore){
+            this.bestBefore = bestBefore;
+        }
     }
 
     public static class GetFoodInfoRequest{
@@ -75,6 +91,14 @@ public class Food{
 
         public String getUserUUID() {
             return userUUID;
+        }
+
+        public void setuserUUID(String userUUID) {
+            this.userUUID = userUUID;
+        }
+
+        public void setFoodinfo(List<FoodInfo> foodInfoList) {
+            this.names = foodInfoList;
         }
     }
 

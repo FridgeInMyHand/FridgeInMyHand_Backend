@@ -1,8 +1,6 @@
 package com.fridgeInMyHand.fridgeInMyHandBackend.food.entity;
 
-import com.fridgeInMyHand.fridgeInMyHandBackend.model.FridgeUser;
 import jakarta.persistence.*;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 
@@ -59,5 +57,12 @@ public class Food {
     }
     public void setIsPublic(Boolean isPublic){
         this.isPublic = isPublic;
+    }
+
+    public String getQuantity() {
+        return quantity;
+    }
+    public boolean getIsPublic(){
+        return isPublic;
     }
 }
