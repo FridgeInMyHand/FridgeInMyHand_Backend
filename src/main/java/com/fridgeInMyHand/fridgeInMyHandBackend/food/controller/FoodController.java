@@ -7,6 +7,7 @@ import com.fridgeInMyHand.fridgeInMyHandBackend.food.dto.Food;
 
 import com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.QFood;
 import com.fridgeInMyHand.fridgeInMyHandBackend.food.repository.FoodRepository;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.hibernate.cfg.annotations.reflection.internal.XMLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,19 +17,25 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/food")
 public class FoodController {
+    @Autowired
+    private FoodRepository foodRepository;
 
     @Autowired
+    public FoodController(FoodRepository foodRepository) {
+        this.foodRepository = foodRepository;
+    }
+    @Autowired
     private JPAQueryFactory jpaQueryFactory;
-
-    @GetMapping
+    @GetMapping("/food")
     public ResponseEntity<Map<String, List<Map<String, Object>>>> findAllFoods(@RequestBody Food.GetFoodInfoRequest request) {
         ObjectMapper mapper = new ObjectMapper();
 
@@ -47,7 +54,7 @@ public class FoodController {
                 for (com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food food : foodList) {
                     Map<String, Object> foodInfo = new HashMap<>();
                     foodInfo.put("name", food.getFoodName());
-                    foodInfo.put("bestBefore", food.getBestBefore() != null ? food.getBestBefore() : null);
+                    foodInfo.put("bestBefore", food.getBestBefore() != null ? food.getBestBefore().toString() : null);
                     foodInfoList.add(foodInfo);
                 }
             } else {
@@ -55,13 +62,14 @@ public class FoodController {
                 List<com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food> publicFoodList = jpaQueryFactory
                         .select(qFood)
                         .from(qFood)
-                        .where(qFood.userUUID.eq(request.getRequestUUID()))
+                        .where(qFood.userUUID.eq(request.getRequestUUID())
+                                .and(qFood.isPublic.isTrue()))
                         .fetch();
 
                 for (com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food food : publicFoodList) {
                     Map<String, Object> foodInfo = new HashMap<>();
+                    foodInfo.put("bestBefore", food.getBestBefore() != null ? food.getBestBefore().toString() : null);
                     foodInfo.put("name", food.getFoodName());
-                    foodInfo.put("bestBefore", food.getBestBefore() != null ? food.getBestBefore() : null);
                     foodInfoList.add(foodInfo);
                 }
             }
@@ -77,6 +85,38 @@ public class FoodController {
     }
 
 
+    @PostMapping("/foods")
+    public ResponseEntity<String> addFoods(@RequestBody Food.PostFoodRequest foodRequest) {
+        try {
+            List<Food.FoodInfo> names = foodRequest.getFoodinfo();
+            String userUUID = foodRequest.getUserUUID();
+            for (Food.FoodInfo foodInfo : names) {
+                String foodName = foodInfo.getFoodName();
+                // 이미 존재하는 음식인지 확인
+                com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food existingFood = foodRepository.findByFoodName(foodName);
+                if (existingFood != null) {
+                    // 이미 존재하는 음식일 경우 정보 수정
+                    existingFood.setQuantity(foodInfo.getQuantity());
+                    existingFood.setIsPublic(foodInfo.getPublic());
+
+                    foodRepository.save(existingFood);
+                } else {
+                    com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food food = new com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food();
+                    food.setUserUUID(userUUID);
+                    food.setFoodName(foodInfo.getFoodName());
+                    food.setQuantity(foodInfo.getQuantity());
+                    food.setBestBefore(foodInfo.getBestBefore());
+                    food.setIsPublic(foodInfo.getPublic());
+                    foodRepository.save(food);
+                }
+            }
 
 
+            return ResponseEntity.ok().build();
+
+        } catch (Exception e) {
+            // 실패한 경우
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // 500 Internal Server Error 상태 코드 반환
+        }
+    }
 }

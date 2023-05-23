@@ -1,27 +1,63 @@
 package com.fridgeInMyHand.fridgeInMyHandBackend.food.entity;
 
+import com.fridgeInMyHand.fridgeInMyHandBackend.model.FridgeUser;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import org.springframework.cglib.core.Local;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@Getter
-@Setter
 @Table
-@RequiredArgsConstructor
 public class Food {
-    @Column(name = "userID", nullable = false)
+    @Column
+    public String userUUID;
+    @Column
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String userUUID;
+    public String foodName;
     @Column
-    private String foodName;
-
+    public String quantity;
     @Column
-    private LocalDateTime bestBefore;
+    private LocalDate bestBefore;
+    @Column
+    public Boolean isPublic;
 
+    public Food(){}
+
+    public Food(String userUUID, String foodName, String quantity, LocalDate bestBefore, Boolean isPublic ){
+        Food food = new Food();
+        food.userUUID = userUUID;
+        food.foodName = foodName;
+        food.quantity = quantity;
+        food.bestBefore = bestBefore;
+        food.isPublic = isPublic;
+
+
+    }
+
+    public Object getFoodName() {
+        return foodName;
+    }
+
+    public Object getBestBefore() {
+        return bestBefore;
+    }
+
+    public void setUserUUID(String userUUID) {
+        this.userUUID = userUUID;
+    }
+
+    public void setFoodName(String foodName){
+        this.foodName = foodName;
+    }
+    public void setQuantity (String quantity){
+        this.quantity = quantity;
+    }
+
+    public void setBestBefore(LocalDate bestBefore){
+        this.bestBefore = bestBefore;
+    }
+    public void setIsPublic(Boolean isPublic){
+        this.isPublic = isPublic;
+    }
 }

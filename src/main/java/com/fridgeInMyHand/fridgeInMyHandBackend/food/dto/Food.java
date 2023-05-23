@@ -4,50 +4,78 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
-import lombok.*;
 
-import java.time.LocalDateTime;
+
+import java.time.LocalDate;
+import java.util.List;
 
 public class Food{
+    public Food(String userUUID, String 음식1, String s, LocalDate now, boolean b) {
+    }
 
-    @AllArgsConstructor
-    public class FoodInfo {
+    public static class FoodInfo {
         public String userUUID;
-
-        public String FoodName;
-        public Integer quantity;
-        public LocalDateTime bestBefore;
-
+        public String foodName;
+        public String quantity;
+        public LocalDate bestBefore;
         public Boolean isPublic;
 
         public String getFoodName() {
-            return FoodName;
+            return foodName;
+        }
+
+        public String getUserUUID(){
+            return userUUID;
+        }
+        public String getQuantity(){
+            return quantity;
+        }
+        public LocalDate getBestBefore(){
+            return bestBefore;
+        }
+
+        public Boolean getPublic() {
+            return isPublic;
         }
     }
-    @Getter
-    @Setter
+
     public static class GetFoodInfoRequest{
         public String requestUUID;
         public String userUUID;
 
+        public String getRequestUUID() {
+            return requestUUID;
+        }
+
+        public String getUserUUID(){
+            return userUUID;
+        }
+
+        public void setRequestUUID(String requestUUID) {
+            this.requestUUID = requestUUID;
+        }
+
+        public void setUserUUID(String userUUID) {
+            this.userUUID = userUUID;
+        }
     }
-    @Getter
-    @AllArgsConstructor
+
     public static class GetFoodInfoResponse{
-        public String foodName;
-        public LocalDateTime bestBefore;
+        private List<FoodInfo> names;
     }
 
-    @Getter
-    @Setter
-    public static class FoodPostRequest{
+
+    public static class PostFoodRequest{
         public String userUUID;
-        public String foodName;
-        public Integer quantity;
-        public LocalDateTime bestBefore;
+        public List<FoodInfo> names;
 
-        public Boolean isPublic;
+        public List<FoodInfo> getFoodinfo() {
+            return names;
+        }
 
+        public String getUserUUID() {
+            return userUUID;
+        }
     }
 
 }
