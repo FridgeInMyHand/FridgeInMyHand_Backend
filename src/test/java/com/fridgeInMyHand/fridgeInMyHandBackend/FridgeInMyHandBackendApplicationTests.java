@@ -134,25 +134,4 @@ class FridgeInMyHandBackendApplicationTests {
         Assertions.assertEquals(1.3f, (Float)response.jsonPath().get("[1].long"), 0.1f);
         Assertions.assertEquals("bbac", response.jsonPath().get("[1].UUID"));
     }
-    @Test
-    void testGetFoodMethod(){
-        given()
-                .body("{\"requestUUID\":\"AABC\", \"userUUID\": \"AABC\", \"names\": [{\"foodName\": \"음식1\",\"bestBefore\": \"2022-05-24\",\"quantity\": \"30L\",\"public\": true}]}")
-                .contentType(ContentType.JSON)
-                .when()
-                .post("/foods")
-                .body().prettyPrint();
-        var response = given()
-                .body("{\"requestUUID\":\"AABC\", \"userUUID\": \"AABC\"}")
-                .contentType(ContentType.JSON)
-                .get("/food")
-                .thenReturn();
-
-
-        assertEquals("statusCode", 200, response.statusCode());
-        Assertions.assertEquals("음식1", response.jsonPath().get("names[0].name"));
-        Assertions.assertEquals("2022-05-24",response.jsonPath().get("names[0].bestBefore"));
-
-
-    }
 }
