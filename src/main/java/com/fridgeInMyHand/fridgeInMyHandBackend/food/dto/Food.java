@@ -11,18 +11,18 @@ public class Food{
     public static class FoodInfo {
         public String userUUID;
         public String foodName;
-        public String quantity;
-        public LocalDate bestBefore;
+        public String amount;
+        public Long bestBefore;
         public Boolean isPublic;
 
         public String getFoodName() {
             return foodName;
         }
 
-        public String getQuantity(){
-            return quantity;
+        public String getAmount(){
+            return amount;
         }
-        public LocalDate getBestBefore(){
+        public Long getBestBefore(){
             return bestBefore;
         }
 
@@ -42,6 +42,7 @@ public class Food{
         public String getUserUUID(){
             return userUUID;
         }
+
     }
 
     public static class GetFoodInfoResponse{

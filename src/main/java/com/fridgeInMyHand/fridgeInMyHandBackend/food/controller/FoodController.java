@@ -44,8 +44,8 @@ public class FoodController {
                 for (com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food food : foodList) {
                     Map<String, Object> foodInfo = new HashMap<>();
                     foodInfo.put("name", food.getFoodName());
-                    foodInfo.put("bestBefore", food.getBestBefore() != null ? food.getBestBefore().toString() : null);
-                    foodInfo.put("amount", food.getQuantity());
+                    foodInfo.put("bestBefore", food.getBestBefore() != null ? food.getBestBefore() : null);
+                    foodInfo.put("amount", food.getAmount());
                     foodInfo.put("public",food.getIsPublic());
                     foodInfoList.add(foodInfo);
                 }
@@ -60,9 +60,9 @@ public class FoodController {
 
                 for (com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food food : publicFoodList) {
                     Map<String, Object> foodInfo = new HashMap<>();
-                    foodInfo.put("bestBefore", food.getBestBefore() != null ? food.getBestBefore().toString() : null);
+                    foodInfo.put("bestBefore", food.getBestBefore() != null ? food.getBestBefore() : null);
                     foodInfo.put("name", food.getFoodName());
-                    foodInfo.put("amount", food.getQuantity());
+                    foodInfo.put("amount", food.getAmount());
                     foodInfoList.add(foodInfo);
                 }
             }
@@ -78,7 +78,7 @@ public class FoodController {
     }
 
 
-    @PostMapping("/foods")
+    @PostMapping("/food")
     public ResponseEntity<String> addFoods(@RequestBody Food.PostFoodRequest foodRequest) {
         try {
             List<Food.FoodInfo> names = foodRequest.getFoodinfo();
@@ -89,7 +89,7 @@ public class FoodController {
                 com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food existingFood = foodRepository.findByFoodName(foodName);
                 if (existingFood != null) {
                     // 이미 존재하는 음식일 경우 정보 수정
-                    existingFood.setQuantity(foodInfo.getQuantity());
+                    existingFood.setAmount(foodInfo.getAmount());
                     existingFood.setIsPublic(foodInfo.getPublic());
 
                     foodRepository.save(existingFood);
@@ -97,7 +97,7 @@ public class FoodController {
                     com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food food = new com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food();
                     food.setUserUUID(userUUID);
                     food.setFoodName(foodInfo.getFoodName());
-                    food.setQuantity(foodInfo.getQuantity());
+                    food.setAmount(foodInfo.getAmount());
                     food.setBestBefore(foodInfo.getBestBefore());
                     food.setIsPublic(foodInfo.getPublic());
                     foodRepository.save(food);

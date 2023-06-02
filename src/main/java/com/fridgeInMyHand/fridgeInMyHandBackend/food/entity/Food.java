@@ -13,9 +13,9 @@ public class Food {
     @Id
     public String foodName;
     @Column
-    public String quantity;
+    public String amount;
     @Column
-    private LocalDate bestBefore;
+    private Long bestBefore;
     @Column
     public Boolean isPublic;
 
@@ -25,7 +25,7 @@ public class Food {
         return foodName;
     }
 
-    public Object getBestBefore() {
+    public Long getBestBefore() {
         return bestBefore;
     }
 
@@ -36,19 +36,19 @@ public class Food {
     public void setFoodName(String foodName){
         this.foodName = foodName;
     }
-    public void setQuantity (String quantity){
-        this.quantity = quantity;
+    public void setAmount (String amount){
+        this.amount = amount;
     }
 
-    public void setBestBefore(LocalDate bestBefore){
+    public void setBestBefore(Long bestBefore){
         this.bestBefore = bestBefore;
     }
     public void setIsPublic(Boolean isPublic){
         this.isPublic = isPublic;
     }
 
-    public String getQuantity() {
-        return quantity;
+    public String getAmount() {
+        return amount;
     }
     public boolean getIsPublic(){
         return isPublic;
