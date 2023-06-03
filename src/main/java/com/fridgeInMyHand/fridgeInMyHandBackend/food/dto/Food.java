@@ -13,7 +13,7 @@ public class Food{
         public String foodName;
         public String amount;
         public Long bestBefore;
-        public Boolean isPublic;
+        public Boolean publicFood;
 
         public String getFoodName() {
             return foodName;
@@ -27,7 +27,7 @@ public class Food{
         }
 
         public Boolean getPublic() {
-            return isPublic;
+            return publicFood;
         }
     }
 

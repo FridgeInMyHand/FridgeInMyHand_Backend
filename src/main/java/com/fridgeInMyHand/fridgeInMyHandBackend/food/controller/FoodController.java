@@ -46,7 +46,7 @@ public class FoodController {
                     foodInfo.put("name", food.getFoodName());
                     foodInfo.put("bestBefore", food.getBestBefore() != null ? food.getBestBefore() : null);
                     foodInfo.put("amount", food.getAmount());
-                    foodInfo.put("public",food.getIsPublic());
+                    foodInfo.put("publicFood",food.getIsPublic());
                     foodInfoList.add(foodInfo);
                 }
             } else {
@@ -55,7 +55,7 @@ public class FoodController {
                         .select(qFood)
                         .from(qFood)
                         .where(qFood.userUUID.eq(request.getRequestUUID())
-                                .and(qFood.isPublic.isTrue()))
+                                .and(qFood.publicFood.isTrue()))
                         .fetch();
 
                 for (com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food food : publicFoodList) {
@@ -90,7 +90,7 @@ public class FoodController {
                 if (existingFood != null) {
                     // 이미 존재하는 음식일 경우 정보 수정
                     existingFood.setAmount(foodInfo.getAmount());
-                    existingFood.setIsPublic(foodInfo.getPublic());
+                    existingFood.setPublic(foodInfo.getPublic());
 
                     foodRepository.save(existingFood);
                 } else {
@@ -99,7 +99,7 @@ public class FoodController {
                     food.setFoodName(foodInfo.getFoodName());
                     food.setAmount(foodInfo.getAmount());
                     food.setBestBefore(foodInfo.getBestBefore());
-                    food.setIsPublic(foodInfo.getPublic());
+                    food.setPublic(foodInfo.getPublic());
                     foodRepository.save(food);
                 }
             }

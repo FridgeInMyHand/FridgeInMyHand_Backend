@@ -1,4 +1,5 @@
 package com.fridgeInMyHand.fridgeInMyHandBackend.food.entity;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -17,7 +18,7 @@ public class Food {
     @Column
     private Long bestBefore;
     @Column
-    public Boolean isPublic;
+    public Boolean publicFood;
 
     public Food(){}
 
@@ -43,14 +44,14 @@ public class Food {
     public void setBestBefore(Long bestBefore){
         this.bestBefore = bestBefore;
     }
-    public void setIsPublic(Boolean isPublic){
-        this.isPublic = isPublic;
+    public void setPublic(Boolean publicFood){
+        this.publicFood = publicFood;
     }
 
     public String getAmount() {
         return amount;
     }
-    public boolean getIsPublic(){
-        return isPublic;
+    public Boolean getIsPublic(){
+        return publicFood;
     }
 }
