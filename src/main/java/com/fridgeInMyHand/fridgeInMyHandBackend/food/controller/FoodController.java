@@ -45,7 +45,7 @@ public class FoodController {
 
                 for (com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food food : foodList) {
                     Map<String, Object> foodInfo = new HashMap<>();
-                    foodInfo.put("name", food.getFoodName());
+                    foodInfo.put("foodName", food.getFoodName());
                     foodInfo.put("bestBefore", food.getBestBefore() != null ? food.getBestBefore() : null);
                     foodInfo.put("amount", food.getAmount());
                     foodInfo.put("publicFood", food.getIsPublic());
@@ -63,7 +63,7 @@ public class FoodController {
                 for (com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food food : publicFoodList) {
                     Map<String, Object> foodInfo = new HashMap<>();
                     foodInfo.put("bestBefore", food.getBestBefore() != null ? food.getBestBefore() : null);
-                    foodInfo.put("name", food.getFoodName());
+                    foodInfo.put("foodName", food.getFoodName());
                     foodInfo.put("amount", food.getAmount());
                     foodInfoList.add(foodInfo);
                 }

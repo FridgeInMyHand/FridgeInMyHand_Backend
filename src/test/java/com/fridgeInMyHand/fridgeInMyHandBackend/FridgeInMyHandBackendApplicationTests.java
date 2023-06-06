@@ -138,10 +138,10 @@ class FridgeInMyHandBackendApplicationTests {
     @Test
     void testGetFoodMethod(){
         given()
-                .body("{\"userUUID\": \"AABC\", \"names\": [{\"foodName\": \"음식7\",\"bestBefore\": 1637711686L ,\"amount\": \"30L\",\"publicFood\": true}]}")
+                .body("{\"userUUID\": \"AABC\", \"names\": [{\"foodName\": \"음식7\",\"amount\": \"30L\", \"bestBefore\": 1637711686,\"publicFood\": true}]}")
                 .contentType(ContentType.JSON)
                 .post("/food")
-                .thenReturn();
+                .body().prettyPrint();
 
         var response = given()
                 .body("{\"requestUUID\":\"AABC\", \"userUUID\": \"AABC\"}")
@@ -152,9 +152,9 @@ class FridgeInMyHandBackendApplicationTests {
 
         assertEquals("statusCode", 200, response.statusCode());
         Assertions.assertEquals("음식7", response.jsonPath().get("names[0].foodName"));
-        Assertions.assertEquals(1637711686L,(Long) response.jsonPath().get("names[0].bestBefore"));
         Assertions.assertEquals("30L", response.jsonPath().get("names[0].amount"));
-        Assertions.assertEquals(true, (Boolean) response.jsonPath().get("names[0].publicFood"));
+        Assertions.assertEquals(1637711686L,response.jsonPath().getLong("names[0].bestBefore"));
+        Assertions.assertEquals(true, response.jsonPath().getBoolean("names[0].publicFood"));
 
 
     }
