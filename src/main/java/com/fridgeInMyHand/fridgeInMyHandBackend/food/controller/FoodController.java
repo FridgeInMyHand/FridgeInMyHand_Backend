@@ -23,9 +23,11 @@ public class FoodController {
     public FoodController(FoodRepository foodRepository) {
         this.foodRepository = foodRepository;
     }
+
     @Autowired
     private JPAQueryFactory jpaQueryFactory;
-    @GetMapping("/foods")
+
+    @GetMapping("/food")
     public ResponseEntity<Map<String, List<Map<String, Object>>>> findAllFoods(@RequestBody Food.GetFoodInfoRequest request) {
         ObjectMapper mapper = new ObjectMapper();
 
@@ -46,7 +48,7 @@ public class FoodController {
                     foodInfo.put("name", food.getFoodName());
                     foodInfo.put("bestBefore", food.getBestBefore() != null ? food.getBestBefore() : null);
                     foodInfo.put("amount", food.getAmount());
-                    foodInfo.put("publicFood",food.getIsPublic());
+                    foodInfo.put("publicFood", food.getIsPublic());
                     foodInfoList.add(foodInfo);
                 }
             } else {
@@ -79,14 +81,25 @@ public class FoodController {
 
 
     @PostMapping("/food")
-    public ResponseEntity<String> addFoods(@RequestBody Food.PostFoodRequest foodRequest) {
+    public ResponseEntity<String> addFoods(@RequestBody String jsonBody) {
+        ObjectMapper mapper = new ObjectMapper();
         try {
+            Food.PostFoodRequest foodRequest = mapper.readValue(jsonBody, Food.PostFoodRequest.class);
             List<Food.FoodInfo> names = foodRequest.getFoodinfo();
             String userUUID = foodRequest.getUserUUID();
+
+
             for (Food.FoodInfo foodInfo : names) {
                 String foodName = foodInfo.getFoodName();
                 // 이미 존재하는 음식인지 확인
-                com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food existingFood = foodRepository.findByFoodName(foodName);
+                QFood qFood = QFood.food;
+
+                com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food existingFood = jpaQueryFactory
+                        .select(qFood)
+                        .from(qFood)
+                        .where(qFood.foodName.eq(foodName))
+                        .fetchFirst();
+
                 if (existingFood != null) {
                     // 이미 존재하는 음식일 경우 정보 수정
                     existingFood.setAmount(foodInfo.getAmount());
@@ -100,16 +113,17 @@ public class FoodController {
                     food.setAmount(foodInfo.getAmount());
                     food.setBestBefore(foodInfo.getBestBefore());
                     food.setPublicFood(foodInfo.getPublicFood());
+
                     foodRepository.save(food);
                 }
             }
 
-
             return ResponseEntity.ok().build();
-
         } catch (Exception e) {
             // 실패한 경우
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // 500 Internal Server Error 상태 코드 반환
         }
     }
 }
+
+

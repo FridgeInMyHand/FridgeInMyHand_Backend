@@ -140,14 +140,13 @@ class FridgeInMyHandBackendApplicationTests {
         given()
                 .body("{\"userUUID\": \"AABC\", \"names\": [{\"foodName\": \"음식7\",\"bestBefore\": 1637711686L ,\"amount\": \"30L\",\"publicFood\": true}]}")
                 .contentType(ContentType.JSON)
-                .when()
                 .post("/food")
                 .thenReturn();
 
         var response = given()
                 .body("{\"requestUUID\":\"AABC\", \"userUUID\": \"AABC\"}")
                 .contentType(ContentType.JSON)
-                .get("/foods")
+                .get("/food")
                 .thenReturn();
 
 

@@ -8,5 +8,4 @@ public interface FoodRepository extends JpaRepository<Food, Long> {
     @Override
     void deleteAll();
 
-    Food findByFoodName(String foodName);
 }
