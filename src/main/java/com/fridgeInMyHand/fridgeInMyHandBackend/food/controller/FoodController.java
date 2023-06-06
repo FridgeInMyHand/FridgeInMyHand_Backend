@@ -23,8 +23,10 @@ public class FoodController {
     public FoodController(FoodRepository foodRepository) {
         this.foodRepository = foodRepository;
     }
+
     @Autowired
     private JPAQueryFactory jpaQueryFactory;
+
     @GetMapping("/food")
     public ResponseEntity<Map<String, List<Map<String, Object>>>> findAllFoods(@RequestBody Food.GetFoodInfoRequest request) {
         ObjectMapper mapper = new ObjectMapper();
@@ -43,10 +45,10 @@ public class FoodController {
 
                 for (com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food food : foodList) {
                     Map<String, Object> foodInfo = new HashMap<>();
-                    foodInfo.put("name", food.getFoodName());
-                    foodInfo.put("bestBefore", food.getBestBefore() != null ? food.getBestBefore().toString() : null);
-                    foodInfo.put("amount", food.getQuantity());
-                    foodInfo.put("public",food.getIsPublic());
+                    foodInfo.put("foodName", food.getFoodName());
+                    foodInfo.put("bestBefore", food.getBestBefore() != null ? food.getBestBefore() : null);
+                    foodInfo.put("amount", food.getAmount());
+                    foodInfo.put("publicFood", food.getIsPublic());
                     foodInfoList.add(foodInfo);
                 }
             } else {
@@ -55,14 +57,14 @@ public class FoodController {
                         .select(qFood)
                         .from(qFood)
                         .where(qFood.userUUID.eq(request.getRequestUUID())
-                                .and(qFood.isPublic.isTrue()))
+                                .and(qFood.publicFood.isTrue()))
                         .fetch();
 
                 for (com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food food : publicFoodList) {
                     Map<String, Object> foodInfo = new HashMap<>();
-                    foodInfo.put("bestBefore", food.getBestBefore() != null ? food.getBestBefore().toString() : null);
-                    foodInfo.put("name", food.getFoodName());
-                    foodInfo.put("amount", food.getQuantity());
+                    foodInfo.put("bestBefore", food.getBestBefore() != null ? food.getBestBefore() : null);
+                    foodInfo.put("foodName", food.getFoodName());
+                    foodInfo.put("amount", food.getAmount());
                     foodInfoList.add(foodInfo);
                 }
             }
@@ -78,38 +80,50 @@ public class FoodController {
     }
 
 
-    @PostMapping("/foods")
-    public ResponseEntity<String> addFoods(@RequestBody Food.PostFoodRequest foodRequest) {
+    @PostMapping("/food")
+    public ResponseEntity<String> addFoods(@RequestBody String jsonBody) {
+        ObjectMapper mapper = new ObjectMapper();
         try {
+            Food.PostFoodRequest foodRequest = mapper.readValue(jsonBody, Food.PostFoodRequest.class);
             List<Food.FoodInfo> names = foodRequest.getFoodinfo();
             String userUUID = foodRequest.getUserUUID();
+
+
             for (Food.FoodInfo foodInfo : names) {
                 String foodName = foodInfo.getFoodName();
                 // 이미 존재하는 음식인지 확인
-                com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food existingFood = foodRepository.findByFoodName(foodName);
+                QFood qFood = QFood.food;
+
+                com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food existingFood = jpaQueryFactory
+                        .select(qFood)
+                        .from(qFood)
+                        .where(qFood.foodName.eq(foodName))
+                        .fetchFirst();
+
                 if (existingFood != null) {
                     // 이미 존재하는 음식일 경우 정보 수정
-                    existingFood.setQuantity(foodInfo.getQuantity());
-                    existingFood.setIsPublic(foodInfo.getPublic());
+                    existingFood.setAmount(foodInfo.getAmount());
+                    existingFood.setPublicFood(foodInfo.getPublicFood());
 
                     foodRepository.save(existingFood);
                 } else {
                     com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food food = new com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food();
                     food.setUserUUID(userUUID);
                     food.setFoodName(foodInfo.getFoodName());
-                    food.setQuantity(foodInfo.getQuantity());
+                    food.setAmount(foodInfo.getAmount());
                     food.setBestBefore(foodInfo.getBestBefore());
-                    food.setIsPublic(foodInfo.getPublic());
+                    food.setPublicFood(foodInfo.getPublicFood());
+
                     foodRepository.save(food);
                 }
             }
 
-
             return ResponseEntity.ok().build();
-
         } catch (Exception e) {
             // 실패한 경우
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // 500 Internal Server Error 상태 코드 반환
         }
     }
 }
+
+
