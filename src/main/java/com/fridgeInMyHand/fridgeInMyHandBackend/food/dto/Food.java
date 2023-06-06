@@ -26,7 +26,7 @@ public class Food{
             return bestBefore;
         }
 
-        public Boolean getPublic() {
+        public Boolean getPublicFood() {
             return publicFood;
         }
     }

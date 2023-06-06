@@ -44,7 +44,7 @@ public class Food {
     public void setBestBefore(Long bestBefore){
         this.bestBefore = bestBefore;
     }
-    public void setPublic(Boolean publicFood){
+    public void setPublicFood(Boolean publicFood){
         this.publicFood = publicFood;
     }
 

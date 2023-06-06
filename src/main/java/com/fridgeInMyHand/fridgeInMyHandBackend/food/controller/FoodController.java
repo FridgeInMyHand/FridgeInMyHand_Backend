@@ -25,7 +25,7 @@ public class FoodController {
     }
     @Autowired
     private JPAQueryFactory jpaQueryFactory;
-    @GetMapping("/food")
+    @GetMapping("/foods")
     public ResponseEntity<Map<String, List<Map<String, Object>>>> findAllFoods(@RequestBody Food.GetFoodInfoRequest request) {
         ObjectMapper mapper = new ObjectMapper();
 
@@ -90,7 +90,7 @@ public class FoodController {
                 if (existingFood != null) {
                     // 이미 존재하는 음식일 경우 정보 수정
                     existingFood.setAmount(foodInfo.getAmount());
-                    existingFood.setPublic(foodInfo.getPublic());
+                    existingFood.setPublicFood(foodInfo.getPublicFood());
 
                     foodRepository.save(existingFood);
                 } else {
@@ -99,7 +99,7 @@ public class FoodController {
                     food.setFoodName(foodInfo.getFoodName());
                     food.setAmount(foodInfo.getAmount());
                     food.setBestBefore(foodInfo.getBestBefore());
-                    food.setPublic(foodInfo.getPublic());
+                    food.setPublicFood(foodInfo.getPublicFood());
                     foodRepository.save(food);
                 }
             }
