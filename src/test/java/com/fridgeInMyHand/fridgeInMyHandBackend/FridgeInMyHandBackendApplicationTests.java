@@ -34,7 +34,7 @@ class FridgeInMyHandBackendApplicationTests {
         var response = given()
                 .body("{\"UUID\": \"abcdef\"}")
                 .contentType(ContentType.JSON)
-                .get("/user")
+                .put("/user")
                 .thenReturn();
 
 
@@ -56,7 +56,7 @@ class FridgeInMyHandBackendApplicationTests {
         var response = given()
                 .body("{\"UUID\": \"abcdef\"}")
                 .contentType(ContentType.JSON)
-                .get("/user")
+                .put("/user")
                 .thenReturn();
 
 
@@ -85,7 +85,7 @@ class FridgeInMyHandBackendApplicationTests {
         var response = given()
                 .body("{\"UUID\": \"abcdef\"}")
                 .contentType(ContentType.JSON)
-                .get("/user")
+                .put("/user")
                 .thenReturn();
 
 
@@ -121,7 +121,7 @@ class FridgeInMyHandBackendApplicationTests {
         var response = given()
                 .body("{\"UUID\": \"unused\",\"lat\": 1.3,\"long\": 1.2,\"lat_limit\": 0.5,\"long_limit\": 0.5}")
                 .contentType(ContentType.JSON)
-                .get("/nearbyUser")
+                .put("/nearbyUser")
                 .thenReturn();
 
 
@@ -146,7 +146,7 @@ class FridgeInMyHandBackendApplicationTests {
         var response = given()
                 .body("{\"requestUUID\":\"AABC\", \"userUUID\": \"AABC\"}")
                 .contentType(ContentType.JSON)
-                .get("/food")
+                .put("/food")
                 .thenReturn();
 
 

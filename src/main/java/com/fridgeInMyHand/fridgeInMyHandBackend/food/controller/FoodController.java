@@ -27,7 +27,7 @@ public class FoodController {
     @Autowired
     private JPAQueryFactory jpaQueryFactory;
 
-    @GetMapping("/food")
+    @PutMapping("/food")
     public ResponseEntity<Map<String, List<Map<String, Object>>>> findAllFoods(@RequestBody Food.GetFoodInfoRequest request) {
         ObjectMapper mapper = new ObjectMapper();
 
