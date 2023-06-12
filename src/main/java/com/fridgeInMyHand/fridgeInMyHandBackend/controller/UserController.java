@@ -86,7 +86,7 @@ public class UserController {
         public String error;
     }
 
-    @GetMapping("/user")
+    @PutMapping("/user")
     @Transactional
     public ResponseEntity<String> getUser(@RequestBody String jsonBody) throws JsonProcessingException {
 
@@ -170,7 +170,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/nearbyUser")
+    @PutMapping("/nearbyUser")
     @Transactional
     public ResponseEntity<String> getNearByUser(@RequestBody String jsonBody) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
