@@ -80,7 +80,7 @@ public class FoodController {
     }
 
 
-    @PostMapping("/food")
+    @PutMapping("/food")
     public ResponseEntity<String> addFoods(@RequestBody String jsonBody) {
         ObjectMapper mapper = new ObjectMapper();
         try {
