@@ -1,14 +1,17 @@
 package com.fridgeInMyHand.fridgeInMyHandBackend.food.controller;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fridgeInMyHand.fridgeInMyHandBackend.food.dto.Food;
 
 import com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.QFood;
 import com.fridgeInMyHand.fridgeInMyHandBackend.food.repository.FoodRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +30,7 @@ public class FoodController {
     @Autowired
     private JPAQueryFactory jpaQueryFactory;
 
-    @GetMapping("/food")
+    @PutMapping("/food")
     public ResponseEntity<Map<String, List<Map<String, Object>>>> findAllFoods(@RequestBody Food.GetFoodInfoRequest request) {
         ObjectMapper mapper = new ObjectMapper();
 
@@ -79,7 +82,6 @@ public class FoodController {
         }
     }
 
-
     @PutMapping("/food")
     public ResponseEntity<String> addFoods(@RequestBody String jsonBody) {
         ObjectMapper mapper = new ObjectMapper();
@@ -89,33 +91,25 @@ public class FoodController {
             String userUUID = foodRequest.getUserUUID();
 
 
+            QFood qFood = QFood.food;
+
+            var foods = jpaQueryFactory
+                    .select(qFood)
+                    .from(qFood)
+                    .where(qFood.userUUID.eq(userUUID))
+                    .fetch();
+
+            foodRepository.deleteAll(foods);
+
             for (Food.FoodInfo foodInfo : names) {
-                String foodName = foodInfo.getFoodName();
-                // 이미 존재하는 음식인지 확인
-                QFood qFood = QFood.food;
+                com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food food = new com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food();
+                food.setUserUUID(userUUID);
+                food.setFoodName(foodInfo.getFoodName());
+                food.setAmount(foodInfo.getAmount());
+                food.setBestBefore(foodInfo.getBestBefore());
+                food.setPublicFood(foodInfo.getPublicFood());
 
-                com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food existingFood = jpaQueryFactory
-                        .select(qFood)
-                        .from(qFood)
-                        .where(qFood.foodName.eq(foodName))
-                        .fetchFirst();
-
-                if (existingFood != null) {
-                    // 이미 존재하는 음식일 경우 정보 수정
-                    existingFood.setAmount(foodInfo.getAmount());
-                    existingFood.setPublicFood(foodInfo.getPublicFood());
-
-                    foodRepository.save(existingFood);
-                } else {
-                    com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food food = new com.fridgeInMyHand.fridgeInMyHandBackend.food.entity.Food();
-                    food.setUserUUID(userUUID);
-                    food.setFoodName(foodInfo.getFoodName());
-                    food.setAmount(foodInfo.getAmount());
-                    food.setBestBefore(foodInfo.getBestBefore());
-                    food.setPublicFood(foodInfo.getPublicFood());
-
-                    foodRepository.save(food);
-                }
+                foodRepository.save(food);
             }
 
             return ResponseEntity.ok().build();
